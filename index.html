@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord OAuth2 App</title>
+</head>
+<body>
+    <div id="info">
+		Hoi!
+	</div>
+    <a id="login" style="display: none;" 
+    href="https://discord.com/api/oauth2/authorize?client_id=1047570093078487050&redirect_uri=http%3A%2F%2Flocalhost%3A53134%2F&response_type=code&scope=identify%20guilds%20rpc.notifications.read%20messages.read%20activities.write%20relationships.read%20dm_channels.read%20applications.store.update">
+    Identifique-se</a>
+
+    <script>
+        function generateRandomString() {
+            let randomString = '';
+            const randomNumber = Math.floor(Math.random() * 10);
+
+            for (let i = 0; i < 20 + randomNumber; i++) {
+                randomString += String.fromCharCode(33 + Math.floor(Math.random() * 94));
+            }
+
+            return randomString;
+        }
+
+        window.onload = () => {
+		const fragment = new URLSearchParams(window.location.hash.slice(1));
+		const [accessToken, tokenType, state] = [fragment.get('access_token'), fragment.get('token_type'), fragment.get('state')];
+
+		if (!accessToken) {
+			const randomString = generateRandomString();
+            localStorage.setItem('oauth-state', randomString);
+
+            document.getElementById('login').href += `&state=${btoa(randomString)}`;
+            return (document.getElementById('login').style.display = 'block');
+		}
+
+        if (localStorage.getItem('oauth-state') !== atob(decodeURIComponent(state))) {
+            return console.log('Você pode ter sido vítima de clickjacking!');
+        }
+
+		fetch('https://discord.com/api/users/@me', {
+			headers: {
+				authorization: `${tokenType} ${accessToken}`,
+			},
+		})
+			.then(result => result.json())
+			.then(response => {
+				const { username, discriminator } = response;
+				document.getElementById('info').innerText += ` ${username}#${discriminator}`;
+			})
+			.catch(console.error);
+	};
+    </script>
+</body>
+</html>
