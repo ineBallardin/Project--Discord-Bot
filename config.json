@@ -1,6 +1,6 @@
 {
 	"token": "meu-token",
-    "clientId": "",
+   	"clientId": "",
 	"clientSecret": "",
 	"access_token": "",
 	"token_type": "",
