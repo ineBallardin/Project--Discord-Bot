@@ -7,13 +7,17 @@ module.exports = {
 		.setDescription('Remove o cargo "@chegou-agora" de todos os membros'),
 	async execute(interaction) {
 		const { guild = {} } = interaction;
-		const role = guild.roles.cache.get(tempRoleId);
-		const guildMembers = guild.members.cache;
+		const guildMemberManager = guild.members;
+		const fetchedMembers = await guildMemberManager.fetch();
+		const filterMembers = member => member.roles.cache.has(tempRoleId);
+		const totalMembersWithRole = fetchedMembers.filter(filterMembers);
 
-		guildMembers.forEach(member => {
-			member.roles.remove(tempRoleId);
+		totalMembersWithRole.forEach((member, i) => {
+			setTimeout(function() {
+				member.roles.remove(tempRoleId);
+			}, i * 1000);
 		});
 
-		await interaction.reply({ content: `O cargo temporário "@${role.name}" foi removido de todos os membros`, ephemeral: true });
+		await interaction.reply({ content: `O cargo temporário "**@${tempRoleId.name}**" foi removido de todos os membros`, ephemeral: true });
 	},
 };
