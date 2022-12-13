@@ -1,10 +1,11 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { tempRoleId } = require('../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('removerole')
-		.setDescription('Remove o cargo "@chegou-agora" de todos os membros'),
+		.setDescription('Remove o cargo "@chegou-agora" de todos os membros')
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 	async execute(interaction) {
 		const { guild = {} } = interaction;
 		const guildMemberManager = guild.members;
@@ -12,12 +13,16 @@ module.exports = {
 		const filterMembers = member => member.roles.cache.has(tempRoleId);
 		const totalMembersWithRole = fetchedMembers.filter(filterMembers);
 
-		totalMembersWithRole.forEach((member, i) => {
-			setTimeout(function() {
-				member.roles.remove(tempRoleId);
-			}, i * 1000);
+		totalMembersWithRole.forEach((member) => {
+			member.roles.remove(tempRoleId)
+				.then(() => {
+					console.log(`Cargo removido de ${member.user.tag}`);
+				})
+				.catch(err => {
+					console.log(`Oopps, algo deu ruim! \n ${err}`);
+				});
 		});
 
-		await interaction.reply({ content: `O cargo temporário "**@${tempRoleId.name}**" foi removido de todos os membros`, ephemeral: true });
+		await interaction.reply({ content: 'O cargo temporário "**@chegou-agora**" foi removido de todos os membros', ephemeral: true });
 	},
 };

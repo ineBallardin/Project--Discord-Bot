@@ -8,7 +8,9 @@ module.exports = {
 			(role) => role.id === tempRoleId,
 		);
 
-		member.roles.add(ROLE);
+		if (!member.user.bot) {
+			member.roles.add(ROLE);
+		}
 
 		console.log(`O cargo ${ROLE.name} foi adicionado ao usuário ${member.user.tag}`);
 	},
