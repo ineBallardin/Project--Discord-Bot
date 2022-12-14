@@ -19,7 +19,7 @@ module.exports = {
 					console.log(`Cargo removido de ${member.user.tag}`);
 				})
 				.catch(err => {
-					console.log(`Oopps, algo deu ruim! \n ${err}`);
+					console.log(`Erro: ${err}`);
 				});
 		});
 
