@@ -26,12 +26,13 @@ module.exports = {
 
 		const dmChannel = await member.createDM(true)
 
-		const sentMessage = await member.send({ components: [buttonStart] });
+		const sentMessage = await member.send({ components: [buttonStart] })
+		.then(member.send({ embeds: [question1], components: [btnQuestion1] }))
+		.then(member.send({ embeds: [question2], components: [btnQuestion2] }))
+		.then(member.send({ embeds: [question2], components: [btnQuestion2] }));
+				
 		console.log(`get sentmessage ${sentMessage}`);
-		
-	
-		await member.send({ embeds: [question1], components: [btnQuestion1] });
-		
+
 
 		const row = new ActionRowBuilder()
 			.addComponents(
